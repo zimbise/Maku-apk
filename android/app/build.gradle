@@ -9,8 +9,45 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
+
+    // Signing configs: uses android/app/release.keystore when present and
+    // reads passwords/alias from environment variables (CI secrets).
+    signingConfigs {
         release {
+            def keystoreFile = file('release.keystore')
+            if (keystoreFile.exists()) {
+                storeFile keystoreFile
+                if (System.getenv("ANDROID_KEYSTORE_PASSWORD") != null) {
+                    storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                }
+                if (System.getenv("ANDROID_KEY_ALIAS") != null) {
+                    keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                }
+                if (System.getenv("ANDROID_KEY_PASSWORD") != null) {
+                    keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+                }
+            }
+        }
+        debug {
+            // Gradle will create a debug keystore automatically if one is not present.
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            // If a release.keystore file exists we use it, otherwise fall back to debug signing.
+            if (file('release.keystore').exists()) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
+            }
             minifyEnabled false
         }
     }
