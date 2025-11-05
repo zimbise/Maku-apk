@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Decode release keystore (if provided)
-        if: secrets.ANDROID_KEYSTORE_B64 != null
+        if: secrets.ANDROID_KEYSTORE_B64 != ''
         env:
           KEY_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
         run: |
