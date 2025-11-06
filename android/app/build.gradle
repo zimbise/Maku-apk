@@ -43,7 +43,7 @@ android {
         }
         release {
             // If a release.keystore file exists we use it, otherwise fall back to debug signing.
-            if (file('release.keystore').exists()) {
+            if (signingConfigs.release.storeFile != null && signingConfigs.release.storeFile.exists()) {
                 signingConfig signingConfigs.release
             } else {
                 signingConfig signingConfigs.debug
